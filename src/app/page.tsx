@@ -273,14 +273,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <Image
-              src="/Updated Logo w_ background 1.png"
-              alt="Kohinoor Elite Living"
-              width={338}
-              height={163}
-              className="focal-logo-img"
-              priority
-            />
+            {/* Empty space - StickyLogo handles emblem at top-left natively */}
           </motion.div>
           <motion.div
             className="header-center"
@@ -288,25 +281,10 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2, ease: "backOut" }}
           >
-            <div className="logo-glow-wrap">
-              <motion.div
-                className="glow-blur-layer"
-                animate={{ scale: [1, 1.2, 1], opacity: [0.45, 0.6, 0.45] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Image
-                  src="/Group 1.png"
-                  alt="Logo Orb"
-                  width={247}
-                  height={241}
-                  className="header-orb-img"
-                />
-              </motion.div>
-            </div>
+            <Link href="/" className="brand-text-logo" style={{ alignItems: 'center', marginBottom: 0 }}>
+              <h3 className="brand-text-main" style={{ fontSize: '2.4rem' }}>KOHINOOR</h3>
+              <h4 className="brand-text-sub" style={{ fontSize: '2.8rem', paddingLeft: 0, marginTop: '-0.5rem' }}>Elite Living</h4>
+            </Link>
           </motion.div>
           <motion.div
             className="header-right"
@@ -606,7 +584,10 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <h3 className="footer-logo serif">KOHINOOR ELITE LIVING</h3>
+            <div className="brand-text-logo" style={{ alignItems: 'center' }}>
+              <h3 className="brand-text-main">KOHINOOR</h3>
+              <h4 className="brand-text-sub" style={{ paddingLeft: 0 }}>Elite Living</h4>
+            </div>
             <p className="footer-tagline">Empowering good nutrition and personally curated, tailored nutrition and Wholesome deliveries.</p>
             <div className="footer-badges">
               <span className="footer-badge">REGISTERED ENTITY DUNS</span>
