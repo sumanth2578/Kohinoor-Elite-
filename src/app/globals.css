@@ -241,8 +241,8 @@ img {
 @keyframes shimmer { 0% { left: -100%; } 100% { left: 200%; } }
 .stat-bar-edge { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); z-index: 5; }
 .stat-pct { font-size: 2.2rem; font-weight: 800; color: #fff; position: relative; z-index: 3; text-shadow: 0 0 20px rgba(255,255,255,0.3); letter-spacing: -0.5px; }
-.stat-description { font-size: 0.85rem; opacity: 0.65; line-height: 1.6; text-align: center; padding: 0 1rem; }
-.stat-label { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.08rem; text-transform: uppercase; margin-bottom: 0.5rem; opacity: 0.9; text-align: center; }
+.stat-description { font-size: 1.1rem; opacity: 0.85; line-height: 1.6; text-align: center; padding: 0 1rem; max-width: 320px; margin: 0 auto; }
+.stat-label { font-size: 1.4rem; font-weight: 600; letter-spacing: 0.12rem; text-transform: uppercase; margin-bottom: 0.8rem; opacity: 1; text-align: center; }
 
 /* ===== STATEMENT ===== */
 .statement-section { padding: 12rem 2rem 15rem; text-align: center; }
@@ -285,81 +285,178 @@ img {
   object-fit: contain;
 }
 
-/* ===== DIAGNOSTICS — two-column sticky ===== */
-.diag-section {
-  height: 300vh;
-  position: relative;
+/* ===== DIAGNOSTICS — Premium Blueprint Journey ===== */
+.diag-section.blueprint-journey {
+  height: 200vh;
   background: #f0ead6;
-  color: #1a1a1a;
+  position: relative;
+  /* Removed overflow: hidden to allow child sticky to function correctly */
 }
+
 .diag-sticky {
   position: sticky;
   top: 0;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-.diag-layout {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 6rem;
-  max-width: 1300px;
   width: 100%;
-  align-items: center;
-}
-
-/* Left text */
-.diag-left { max-width: 580px; }
-.diag-heading {
-  font-size: clamp(2.5rem, 4.5vw, 4rem);
-  margin-bottom: 2rem;
-  color: #000;
-  font-weight: 500;
-  line-height: 1.1;
-}
-.diag-body-text {
-  font-size: clamp(1.1rem, 1.3vw, 1.3rem);
-  line-height: 1.8;
-  color: #333;
-  margin-bottom: 2rem;
-}
-
-/* Right card */
-.diag-right {
-  display: flex;
-  justify-content: center;
-}
-.diag-frame {
-  width: 100%;
-  max-width: 480px;
-  border-radius: 24px;
-  background: #5b694b;
-  padding: 1.5rem;
-  box-shadow: 0 30px 70px rgba(0,0,0,0.1);
-}
-.diag-slide {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.diag-slide-img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  border-radius: 16px;
-  overflow: hidden;
+
+.diag-header-static {
   position: relative;
-  background: #fff;
-}
-.diag-slide-label {
+  width: 100%;
   text-align: center;
-  color: #fff;
-  font-weight: 500;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  padding: 1rem 0.5rem 0.3rem;
+  z-index: 50;
+  margin-bottom: 5rem;
+}
+
+.diag-heading-centered {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  color: #1e293b;
+  margin: 0 0 1.5rem;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+.diag-sub-text-blueprint {
+  max-width: 650px;
+  margin: 0 auto;
+  color: #4a7c8c;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.diag-blueprint-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  z-index: 10;
+}
+
+.blueprint-card {
+  flex: 1;
+  max-width: 360px;
+  background: white;
+  border: 1px solid #4a7c8c;
+  border-radius: 4px;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s ease;
+  box-shadow: 0 4px 20px rgba(74, 124, 140, 0.1);
+}
+
+.card-blueprint-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid #4a7c8c;
+}
+
+.index-box {
+  padding: 0.8rem 1.2rem;
+  border-right: 1px solid #4a7c8c;
+  color: #4a7c8c;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-blueprint-title {
+  padding: 0.8rem 1.2rem;
   margin: 0;
-  font-style: italic;
+  font-size: 1rem;
+  color: #4a7c8c;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+}
+
+.card-blueprint-content {
+  padding: 1.5rem;
+}
+
+.card-blueprint-desc {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  min-height: 4.8rem;
+}
+
+.card-blueprint-visual {
+  width: 100%;
+  aspect-ratio: 16/10;
+  position: relative;
+  border: 1px solid rgba(74, 124, 140, 0.2);
+  overflow: hidden;
+}
+
+.wireframe-img {
+  filter: grayscale(1) brightness(0.9) sepia(1) hue-rotate(160deg) contrast(1.1);
+  transition: all 0.6s ease;
+}
+
+.blueprint-card.active .wireframe-img {
+  filter: grayscale(0) brightness(1) sepia(0);
+}
+
+.wireframe-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(74, 124, 140, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 124, 140, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+/* Blueprint Connector */
+.blueprint-connector {
+  flex: 0.3;
+  height: 1px;
+  position: relative;
+  margin: 2.5rem -10px 0;
+}
+
+.connector-line-thin {
+  width: 100%;
+  height: 1px;
+  background: rgba(74, 124, 140, 0.2);
+  position: absolute;
+  top: 0;
+}
+
+.connector-fill-blue {
+  width: 100%;
+  height: 1px;
+  background: #4a7c8c;
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 0 8px rgba(74, 124, 140, 0.3);
+}
+
+@media (max-width: 1024px) {
+  .diag-section.blueprint-journey { height: auto; padding: 6rem 1rem; }
+  .diag-sticky { position: static; height: auto; display: block; overflow: visible; }
+  .diag-blueprint-grid { flex-direction: column; gap: 4rem; padding: 0; }
+  .blueprint-card { 
+    max-width: 480px; 
+    width: 100%; 
+    opacity: 1 !important; 
+    scale: 1 !important; 
+    filter: none !important;
+    transform: none !important;
+  }
+  .blueprint-connector { width: 1px; height: 40px; margin: -20px 0; left: 50%; }
+  .connector-line-thin, .connector-fill-blue { width: 1px; height: 100%; left: 0; top: 0; }
 }
 
 /* ===== BENEFITS ===== */
@@ -379,6 +476,24 @@ img {
 .faq-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .faq-answer-wrap { padding: 0 2rem 1.5rem; }
 .faq-answer { opacity: 0.85; line-height: 1.7; font-size: 0.95rem; color: #eee; white-space: pre-line; }
+
+/* ===== FOOTER (Standard Styles) ===== */
+.main-footer { padding: 5rem 2rem 2rem; background: #5b694b; color: white; }
+.footer-top { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 4rem; margin-bottom: 4rem; }
+.footer-brand { flex: 1.5; min-width: 300px; }
+.footer-tagline { opacity: 0.8; margin-bottom: 1.5rem; max-width: 400px; line-height: 1.6; }
+.footer-badges { display: flex; flex-direction: column; gap: 0.5rem; }
+.footer-badge { font-size: 0.7rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.1em; }
+.footer-links-group { flex: 2; display: flex; flex-wrap: wrap; gap: 4rem; }
+.footer-col { flex: 1; min-width: 200px; }
+.footer-col-title { font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600; }
+.footer-contact-item { display: flex; gap: 1rem; margin-bottom: 1.2rem; margin-top: 0; }
+.footer-contact-icon { width: 20px; height: 20px; opacity: 0.7; flex-shrink: 0; margin-top: 0.2rem; }
+.footer-contact-text { font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
+.footer-col p { margin-bottom: 0.8rem; font-size: 0.9rem; opacity: 0.8; transition: opacity 0.2s ease; }
+.footer-col p:hover { opacity: 1; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; max-width: 1200px; margin: 0 auto; }
+.footer-copy { font-size: 0.8rem; opacity: 0.5; }
 
 /* ===== FOOTER ===== */
 .main-footer { padding: 0; background: #0b0b0b; color: #fff; }
@@ -540,9 +655,9 @@ img {
   .stats-heading { font-size: clamp(1.8rem, 6vw, 2.5rem); margin-bottom: 2.5rem; }
   .stats-grid { max-width: 100%; }
   .stat-bar-outer { height: 200px; margin-bottom: 1.5rem; }
-  .stat-pct { font-size: 1.6rem; }
-  .stat-label { font-size: 0.8rem; }
-  .stat-description { font-size: 0.75rem; padding: 0 0.5rem; }
+  .stat-pct { font-size: 2rem; }
+  .stat-label { font-size: 1.1rem; }
+  .stat-description { font-size: 0.95rem; padding: 0 0.5rem; opacity: 0.9; }
 
   /* Statement */
   .statement-section { padding: 3rem 1rem 5rem; }

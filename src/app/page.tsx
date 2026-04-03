@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import React, { useState, useRef, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { 
@@ -17,57 +17,97 @@ import { MagicText, MagicTextRed } from "@/components/MagicText";
 function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: string; label: string }[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
+  
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end end"],
+    offset: ["start start", "end end"]
   });
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (v < 0.2) setActiveStep(0);
-    else if (v < 0.5) setActiveStep(1);
+    if (v < 0.3) setActiveStep(0);
+    else if (v < 0.7) setActiveStep(1);
     else setActiveStep(2);
   });
 
   return (
-    <section ref={sectionRef} className="diag-section">
+    <section ref={sectionRef} className="diag-section blueprint-journey">
       <div className="diag-sticky">
-        <div className="diag-layout">
-          {/* Left — text content */}
-          <div className="diag-left">
-            <h2 className="diag-heading serif">What Your Body Needs</h2>
-            <p className="diag-body-text">
-              Not everyone needs the same nutrients. Based on your lifestyle, energy levels, and health concerns, your body requires a different mix of vitamins and micronutrients
-            </p>
-            <p className="diag-body-text">
-              <strong>Daily Nutrition Target:</strong><br />
-              Custom fruit, Nuts and seeds selection tailored to your needs
-            </p>
+        <div className="container relative z-10 h-full flex flex-col items-center justify-center">
+          <div className="diag-header-static">
+            <motion.h2 
+              className="diag-heading-centered serif"
+              style={{ 
+                opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
+                y: useTransform(scrollYProgress, [0, 0.1], [10, 0])
+              }}
+            >
+              What Your Body Needs
+            </motion.h2>
+            <motion.p 
+              className="diag-sub-text-blueprint narrow centered"
+              style={{
+                opacity: useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 0.7, 0.7, 0]),
+                y: useTransform(scrollYProgress, [0, 0.15], [10, 0])
+              }}
+            >
+              Not everyone needs the same nutrients. Based on your lifestyle, energy levels, and health concerns, 
+              your body requires a different mix of vitamins and micronutrients.
+            </motion.p>
           </div>
 
-          {/* Right — card that swaps content */}
-          <div className="diag-right">
-            <div className="diag-frame">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeStep}
-                  className="diag-slide"
-                  initial={{ opacity: 0, y: 25 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          <div className="diag-blueprint-grid">
+            {diagSlides.map((slide, index) => (
+              <Fragment key={index}>
+                <motion.div 
+                  className={`blueprint-card ${activeStep === index ? 'active' : ''}`}
+                  animate={{ 
+                    scale: activeStep === index ? 1.05 : 0.95,
+                    opacity: activeStep === index ? 1 : (activeStep > index ? 0.3 : 0.1),
+                    filter: activeStep === index ? 'blur(0px)' : 'blur(1px)',
+                    y: activeStep === index ? -10 : 0
+                  }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
                 >
-                  <div className="diag-slide-img">
-                    <Image
-                      src={diagSlides[activeStep].src}
-                      alt={diagSlides[activeStep].alt}
-                      fill
-                      style={{ objectFit: "cover" }}
+                  <div className="card-blueprint-header">
+                    <div className="index-box serif">
+                      0{index + 1}
+                    </div>
+                    <h3 className="card-blueprint-title serif">
+                      {index === 0 ? "Diagnostics" : (index === 1 ? "Expert Prescription" : "Weekly Delivery")}
+                    </h3>
+                  </div>
+                  
+                  <div className="card-blueprint-content">
+                    <p className="card-blueprint-desc narrow">
+                      {slide.label}
+                    </p>
+                    
+                    <div className="card-blueprint-visual">
+                      <Image
+                        src={slide.src}
+                        alt={slide.alt}
+                        fill
+                        className="wireframe-img"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className="wireframe-grid-overlay" />
+                    </div>
+                  </div>
+                </motion.div>
+                
+                {index < diagSlides.length - 1 && (
+                  <div className="blueprint-connector">
+                    <div className="connector-line-thin" />
+                    <motion.div 
+                      className="connector-fill-blue"
+                      animate={{ scaleX: activeStep > index ? 1 : 0 }}
+                      style={{ originX: 0 }}
+                      transition={{ duration: 0.6 }}
                     />
                   </div>
-                  <p className="diag-slide-label">{diagSlides[activeStep].label}</p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+                )}
+              </Fragment>
+            ))}
           </div>
         </div>
       </div>
@@ -254,7 +294,7 @@ export default function Home() {
           transition={{ delay: index * 0.12 + 0.6, duration: 0.4 }}
           viewport={{ once: true }}
         >
-          <p className="stat-label" style={{ color: stat.glowColor?.replace('0.6', '1') || '#ff3b1f' }}>{stat.label}</p>
+          <p className="stat-label serif" style={{ color: stat.glowColor?.replace('0.6', '1') || '#ff3b1f' }}>{stat.label}</p>
           <p className="stat-description">{stat.desc}</p>
         </motion.div>
       </motion.div>
@@ -503,10 +543,13 @@ export default function Home() {
           >
             <LayeredText
               lines={[
-                { top: "\u00A0", bottom: "Personalised Plans" },
-                { top: "Personalised Plans", bottom: "Saved Cost" },
-                { top: "Saved Cost", bottom: "More Energy" },
-                { top: "More Energy", bottom: "\u00A0" },
+                { top: "\u00A0", bottom: "Personalised" },
+                { top: "Personalised", bottom: "Plans" },
+                { top: "Plans", bottom: "Saved" },
+                { top: "Saved", bottom: "Cost" },
+                { top: "Cost", bottom: "More" },
+                { top: "More", bottom: "Energy" },
+                { top: "Energy", bottom: "\u00A0" },
               ]}
             />
           </motion.div>

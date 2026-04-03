@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 
 interface LayeredTextProps {
   lines?: Array<{ top: string; bottom: string }>
+  colors?: Record<string, string>
   fontSize?: string
   lineHeight?: number
   className?: string
@@ -12,23 +13,28 @@ interface LayeredTextProps {
 
 export function LayeredText({
   lines = [
-    { top: "\u00A0", bottom: "Personalised Plans" },
-    { top: "Personalised Plans", bottom: "Saved Cost" },
-    { top: "Saved Cost", bottom: "More Energy" },
-    { top: "More Energy", bottom: "\u00A0" },
+    { top: "\u00A0", bottom: "Personalised" },
+    { top: "Personalised", bottom: "Plans" },
+    { top: "Plans", bottom: "Saved" },
+    { top: "Saved", bottom: "Cost" },
+    { top: "Cost", bottom: "More" },
+    { top: "More", bottom: "Energy" },
+    { top: "Energy", bottom: "\u00A0" },
   ],
-  fontSize = "clamp(2.5rem, 5vw, 4.5rem)",
-  lineHeight = 80,
+  colors = {
+    "Personalised": "#111111",
+    "Plans": "#111111",
+    "Saved": "#2E7D32",
+    "Cost": "#2E7D32",
+    "More": "#C8A96A",
+    "Energy": "#C8A96A",
+  },
+  fontSize = "clamp(1.8rem, 3.5vw, 3rem)",
+  lineHeight = 60,
   className = "",
 }: LayeredTextProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
-
-  const calculateTranslateX = (index: number) => {
-    const baseOffset = 35
-    const centerIndex = Math.floor(lines.length / 2)
-    return (index - centerIndex) * baseOffset
-  }
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -44,14 +50,14 @@ export function LayeredText({
       y: -lineHeight,
       duration: 0.8,
       ease: "power2.out",
-      stagger: 0.08,
+      stagger: 0.06,
     }, 0)
 
     timelineRef.current.to(allBottoms, {
       y: -lineHeight,
       duration: 0.8,
       ease: "power2.out",
-      stagger: 0.08,
+      stagger: 0.06,
     }, 0)
 
     const handleMouseEnter = () => timelineRef.current?.play()
@@ -67,12 +73,17 @@ export function LayeredText({
     }
   }, [lines, lineHeight])
 
-  const textStyle = {
-    fontFamily: "var(--font-serif)",
-    color: "#0a0a0a",
-    fontWeight: 900 as const,
-    textShadow: "2px 2px 0px rgba(0,0,0,0.15), 4px 4px 0px rgba(0,0,0,0.08), 6px 6px 12px rgba(0,0,0,0.1)",
-    WebkitTextStroke: "0.5px rgba(0,0,0,0.1)",
+  const getTextStyle = (word: string): React.CSSProperties => {
+    const c = colors[word] || "#2F5D50"
+    return {
+      fontFamily: "var(--font-serif)",
+      fontWeight: 900,
+      textTransform: "uppercase",
+      letterSpacing: "-0.02em",
+      color: c,
+      textShadow: `2px 2px 0px ${c}26, 4px 4px 0px ${c}14, 6px 6px 12px ${c}1a`,
+      WebkitTextStroke: `0.5px ${c}1a`,
+    }
   }
 
   return (
@@ -102,7 +113,9 @@ export function LayeredText({
         }}
       >
         {lines.map((line, index) => {
-          const tx = calculateTranslateX(index)
+          const baseOffset = 20
+          const centerIndex = Math.floor(lines.length / 2)
+          const tx = (index - centerIndex) * baseOffset
           const isEven = index % 2 === 0
 
           return (
@@ -115,7 +128,7 @@ export function LayeredText({
                 height: `${lineHeight}px`,
                 width: "100%",
                 zIndex: index,
-                marginBottom: "6px",
+                marginBottom: "4px",
                 transform: `translateX(${tx}px) skew(${isEven ? "60deg, -30deg" : "0deg, -30deg"}) scaleY(${isEven ? 0.66667 : 1.33333})`,
                 backfaceVisibility: "hidden",
               }}
@@ -132,7 +145,7 @@ export function LayeredText({
                   padding: "0 15px",
                   margin: 0,
                   whiteSpace: "nowrap",
-                  ...textStyle,
+                  ...getTextStyle(line.top),
                 }}
               >
                 {line.top}
@@ -149,7 +162,7 @@ export function LayeredText({
                   padding: "0 15px",
                   margin: 0,
                   whiteSpace: "nowrap",
-                  ...textStyle,
+                  ...getTextStyle(line.bottom),
                 }}
               >
                 {line.bottom}
