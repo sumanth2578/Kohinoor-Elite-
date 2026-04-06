@@ -7,6 +7,8 @@ interface MagicTextProps {
   text: string;
   className?: string;
   progress?: MotionValue<number>;
+  x?: MotionValue<number>;
+  y?: MotionValue<number>;
 }
 
 function Word({ word, range, progress }: { word: string; range: [number, number]; progress: any }) {
@@ -48,7 +50,7 @@ function RedWord({ word, range, progress }: { word: string; range: [number, numb
   );
 }
 
-export function MagicText({ text, className, progress }: MagicTextProps) {
+export function MagicText({ text, className, progress, x, y }: MagicTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: localScrollYProgress } = useScroll({
     target: containerRef,
@@ -59,7 +61,7 @@ export function MagicText({ text, className, progress }: MagicTextProps) {
   const words = text.split(" ");
 
   return (
-    <div ref={containerRef} className={className} style={{ position: "relative" }}>
+    <motion.div ref={containerRef} className={className} style={{ position: "relative", x, y }}>
       <p style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
         {words.map((word, i) => {
           const start = i / words.length;
@@ -69,11 +71,11 @@ export function MagicText({ text, className, progress }: MagicTextProps) {
           );
         })}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
-export function MagicTextRed({ text, className, progress }: MagicTextProps) {
+export function MagicTextRed({ text, className, progress, x, y }: MagicTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: localScrollYProgress } = useScroll({
     target: containerRef,
@@ -84,7 +86,7 @@ export function MagicTextRed({ text, className, progress }: MagicTextProps) {
   const words = text.split(" ");
 
   return (
-    <div ref={containerRef} className={className} style={{ position: "relative" }}>
+    <motion.div ref={containerRef} className={className} style={{ position: "relative", x, y }}>
       <p style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
         {words.map((word, i) => {
           const start = i / words.length;
@@ -94,7 +96,7 @@ export function MagicTextRed({ text, className, progress }: MagicTextProps) {
           );
         })}
       </p>
-    </div>
+    </motion.div>
   );
 }
 

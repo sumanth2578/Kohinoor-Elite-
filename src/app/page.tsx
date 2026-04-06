@@ -3,21 +3,33 @@
 import React, { useState, useRef, Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  motion, 
-  AnimatePresence, 
-  useScroll, 
-  useTransform, 
-  useMotionValueEvent 
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  useInView,
+  useMotionValue,
+  useSpring
 } from "framer-motion";
-import { ChevronRight, Plus, Minus } from "lucide-react";
+import { useEffect } from "react";
+import { ChevronRight, Plus, Minus, Menu, X } from "lucide-react";
 import { LayeredText } from "@/components/LayeredText";
 import { MagicText, MagicTextRed } from "@/components/MagicText";
 
-function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: string; label: string }[] }) {
+function DiagStorySection({
+  diagSlides,
+  paraX,
+  paraY
+}: {
+  diagSlides: { src: string; alt: string; label: string }[];
+  paraX: any;
+  paraY: any;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
-  
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"]
@@ -34,23 +46,23 @@ function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: stri
       <div className="diag-sticky">
         <div className="container relative z-10 h-full flex flex-col items-center justify-center">
           <div className="diag-header-static">
-            <motion.h2 
+            <motion.h2
               className="diag-heading-centered serif"
-              style={{ 
+              style={{
                 opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]),
                 y: useTransform(scrollYProgress, [0, 0.1], [10, 0])
               }}
             >
               What Your Body Needs
             </motion.h2>
-            <motion.p 
+            <motion.p
               className="diag-sub-text-blueprint narrow centered"
               style={{
                 opacity: useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 0.7, 0.7, 0]),
                 y: useTransform(scrollYProgress, [0, 0.15], [10, 0])
               }}
             >
-              Not everyone needs the same nutrients. Based on your lifestyle, energy levels, and health concerns, 
+              Not everyone needs the same nutrients. Based on your lifestyle, energy levels, and health concerns,
               your body requires a different mix of vitamins and micronutrients.
             </motion.p>
           </div>
@@ -58,17 +70,29 @@ function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: stri
           <div className="diag-blueprint-grid">
             {diagSlides.map((slide, index) => (
               <Fragment key={index}>
-                <motion.div 
+                <motion.div
                   className={`blueprint-card ${activeStep === index ? 'active' : ''}`}
-                  animate={{ 
+                  animate={{
                     scale: activeStep === index ? 1.05 : 0.95,
                     opacity: activeStep === index ? 1 : (activeStep > index ? 0.3 : 0.1),
                     filter: activeStep === index ? 'blur(0px)' : 'blur(1px)',
                     y: activeStep === index ? -10 : 0
                   }}
+                  whileHover={{
+                    rotateY: index === 0 ? -8 : 8,
+                    rotateX: 4,
+                    scale: activeStep === index ? 1.08 : 1.02,
+                    zIndex: 50
+                  }}
+                  style={{
+                    perspective: 1000,
+                    x: paraX,
+                    y: paraY,
+                    transformStyle: "preserve-3d"
+                  }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                 >
-                  <div className="card-blueprint-header">
+                  <div className="card-blueprint-header" style={{ transform: "translateZ(30px)" }}>
                     <div className="index-box serif">
                       0{index + 1}
                     </div>
@@ -76,12 +100,12 @@ function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: stri
                       {index === 0 ? "Diagnostics" : (index === 1 ? "Expert Prescription" : "Weekly Delivery")}
                     </h3>
                   </div>
-                  
-                  <div className="card-blueprint-content">
+
+                  <div className="card-blueprint-content" style={{ transform: "translateZ(20px)" }}>
                     <p className="card-blueprint-desc narrow">
                       {slide.label}
                     </p>
-                    
+
                     <div className="card-blueprint-visual">
                       <Image
                         src={slide.src}
@@ -94,11 +118,11 @@ function DiagStorySection({ diagSlides }: { diagSlides: { src: string; alt: stri
                     </div>
                   </div>
                 </motion.div>
-                
+
                 {index < diagSlides.length - 1 && (
                   <div className="blueprint-connector">
                     <div className="connector-line-thin" />
-                    <motion.div 
+                    <motion.div
                       className="connector-fill-blue"
                       animate={{ scaleX: activeStep > index ? 1 : 0 }}
                       style={{ originX: 0 }}
@@ -144,6 +168,7 @@ const BlurIn = ({ text, delay = 0 }: { text: string; delay?: number }) => {
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroY = useTransform(heroScroll, [0, 1], [0, 150]);
@@ -151,6 +176,47 @@ export default function Home() {
 
   const statementRef = useRef<HTMLElement>(null);
   const { scrollYProgress: statementScroll } = useScroll({ target: statementRef, offset: ["start start", "end end"] });
+
+  // Cursor tracking for parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 25, stiffness: 150 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      mouseX.set((clientX / innerWidth) - 0.5);
+      mouseY.set((clientY / innerHeight) - 0.5);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  // Parallax transforms for Statement text
+  const paraX = useTransform(smoothX, [-0.5, 0.5], [-15, 15]);
+  const paraY = useTransform(smoothY, [-0.5, 0.5], [-15, 15]);
+
+  // Video playback logic
+  const mealsRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mealsInView = useInView(mealsRef, { once: false, amount: 0.1 });
+  const [videoEnded, setVideoEnded] = useState(false);
+
+  useEffect(() => {
+    if (mealsInView) {
+      setVideoEnded(false);
+      // Wait for re-mount then play
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0;
+          videoRef.current.play().catch(e => console.error("Video play error:", e));
+        }
+      }, 50);
+    }
+  }, [mealsInView]);
 
   const diagSlides = [
     {
@@ -335,12 +401,48 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <Link href="/connect" className="score-btn">
+            <Link href="/connect" className="score-btn desktop-only">
               Get your Health Sorted!
               <ChevronRight size={18} strokeWidth={2.5} />
             </Link>
+            <button
+              className="hamburger-btn mobile-only"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </motion.div>
         </header>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              className="mobile-menu-overlay"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <button
+                className="mobile-menu-close"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={28} strokeWidth={2} />
+              </button>
+              <Link
+                href="/connect"
+                className="mobile-menu-link"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get your Health Sorted!
+                <ChevronRight size={18} strokeWidth={2.5} />
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div
           className="container hero-content-box"
@@ -407,11 +509,15 @@ export default function Home() {
                 text="You’re not unhealthy. You’re just out of balance. Get your Health Sorted! THE SOLUTION Your meals are full. Your schedule is packed. Your routine is consistent. But your nutrition isn’t."
                 className="magic-text-block"
                 progress={useTransform(statementScroll, [0.15, 0.7], [0, 1])}
+                x={paraX}
+                y={paraY}
               />
               <MagicTextRed
                 text="And over time, your body keeps adjusting — until it can’t."
                 className="magic-text-block"
                 progress={useTransform(statementScroll, [0.65, 0.95], [0, 1])}
+                x={useTransform(paraX, (v: number) => v * 1.5)} // Slightly more movement for red text
+                y={useTransform(paraY, (v: number) => v * 1.5)}
               />
             </div>
           </div>
@@ -419,7 +525,7 @@ export default function Home() {
       </section>
 
       {/* ===== NUTRITION COMPARISON SECTION ===== */}
-      <section id="learn" className="comparison-section">
+      <section id="learn" className="comparison-section" style={{ isolation: 'isolate' }}>
         <div className="container">
           <motion.div
             className="comp-header"
@@ -493,6 +599,7 @@ export default function Home() {
 
             <motion.div
               className="meals-composite-wrap"
+              ref={mealsRef}
               initial={{ opacity: 0, scale: 0.3, y: 60 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
@@ -505,7 +612,7 @@ export default function Home() {
               }}
             >
               <motion.div
-                animate={{ 
+                animate={{
                   y: [0, -15, 0],
                   rotateZ: [0, 0.5, -0.5, 0]
                 }}
@@ -515,16 +622,67 @@ export default function Home() {
                   ease: "easeInOut",
                   delay: 1.2
                 }}
-                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  background: 'transparent'
+                }}
               >
-                <Image
-                  src="/meals/Group 3.png"
-                  alt="Daily Routine vs Body Needs — meals comparison"
-                  width={800}
-                  height={500}
-                  className="meals-composite-img"
-                  style={{ objectFit: "contain", filter: "drop-shadow(0px 25px 35px rgba(0,0,0,0.08))" }}
-                />
+                <div style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '800px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {/* The static image serves as the layout base and final state */}
+                  <Image
+                    src="/meals/Group_3.png"
+                    alt="Nutrition Needs Static"
+                    width={800}
+                    height={500}
+                    priority
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      objectFit: "contain",
+                      display: 'block',
+                      mixBlendMode: 'multiply',
+                      opacity: videoEnded ? 1 : 0, // Hide while video is active to prevent ghosting
+                      transition: 'opacity 0.2s ease-in-out'
+                    }}
+                  />
+                  {!videoEnded && mealsInView && (
+                    <video
+                      key="active-video-v5"
+                      ref={videoRef}
+                      src="/updated-ani.mp4"
+                      muted
+                      playsInline
+                      autoPlay
+                      onEnded={() => setVideoEnded(true)}
+                      onError={(e) => {
+                        console.error("Video element error:", e);
+                        setVideoEnded(true);
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        mixBlendMode: 'multiply',
+                        display: 'block',
+                        zIndex: 10,
+                        opacity: 1
+                      }}
+                    />
+                  )}
+                </div>
               </motion.div>
             </motion.div>
 
@@ -551,7 +709,7 @@ export default function Home() {
       </section>
 
       {/* ===== DIAGNOSTICS SECTION ===== */}
-      <DiagStorySection diagSlides={diagSlides} />
+      <DiagStorySection diagSlides={diagSlides} paraX={paraX} paraY={paraY} />
 
       {/* ===== BENEFITS SECTION ===== */}
       <section className="benefits-section">
