@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 
 interface MagicTextProps {
   text: string;
   className?: string;
+  progress?: MotionValue<number>;
 }
 
 function Word({ word, range, progress }: { word: string; range: [number, number]; progress: any }) {
@@ -47,13 +48,14 @@ function RedWord({ word, range, progress }: { word: string; range: [number, numb
   );
 }
 
-export function MagicText({ text, className }: MagicTextProps) {
+export function MagicText({ text, className, progress }: MagicTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: localScrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.8", "end 0.4"],
   });
 
+  const activeProgress = progress || localScrollYProgress;
   const words = text.split(" ");
 
   return (
@@ -63,7 +65,7 @@ export function MagicText({ text, className }: MagicTextProps) {
           const start = i / words.length;
           const end = (i + 1) / words.length;
           return (
-            <Word key={i} word={word} range={[start, end]} progress={scrollYProgress} />
+            <Word key={i} word={word} range={[start, end]} progress={activeProgress} />
           );
         })}
       </p>
@@ -71,13 +73,14 @@ export function MagicText({ text, className }: MagicTextProps) {
   );
 }
 
-export function MagicTextRed({ text, className }: MagicTextProps) {
+export function MagicTextRed({ text, className, progress }: MagicTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: localScrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.8", "end 0.4"],
   });
 
+  const activeProgress = progress || localScrollYProgress;
   const words = text.split(" ");
 
   return (
@@ -87,10 +90,11 @@ export function MagicTextRed({ text, className }: MagicTextProps) {
           const start = i / words.length;
           const end = (i + 1) / words.length;
           return (
-            <RedWord key={i} word={word} range={[start, end]} progress={scrollYProgress} />
+            <RedWord key={i} word={word} range={[start, end]} progress={activeProgress} />
           );
         })}
       </p>
     </div>
   );
 }
+

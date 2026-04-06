@@ -149,6 +149,9 @@ export default function Home() {
   const heroY = useTransform(heroScroll, [0, 1], [0, 150]);
   const heroOpacity = useTransform(heroScroll, [0, 0.8], [1, 0]);
 
+  const statementRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: statementScroll } = useScroll({ target: statementRef, offset: ["start start", "end end"] });
+
   const diagSlides = [
     {
       src: "/diagnostics_vial.png",
@@ -208,7 +211,7 @@ export default function Home() {
 
   const faqs = [
     { q: "How is this different from buying fruits myself?", a: "You have to decide what to eat and order them repeatedly yourself but we handle all this for you and know what we sell so it is a cheaper run with enhanced quality." },
-    { q: "How is my fruit box personalised?", a: "Generic packages for men, women and children covering all necessary vitamins, minerals and fibre. Personalised plan is and your from diagnostics. Expert nutritionist consultation. Delivery of the fruit/Nut package." },
+    { q: "How is my fruit/nuts box personalised?", a: "We have both generic and personalised packages. We have generic packages designed with scope for your taste consideration specifically for men, women and children seperately. We also have personalised packages which will cover everything right from your diagnostics, expert nutritionist advice followed by a personalised plan and finally delivering your custom fruits/nuts packages to home!" },
     { q: "Do I need to change my diet?", a: "No. You can continue your regular meals. We simply add the missing micronutrients your body needs — without disrupting your routine." },
     { q: "How often will I receive my box?", a: "Deliveries are planned based on the type of fruits and their shelf life. Some fruits are meant for 2-3 days, while others last longer. We ensure you always receive fresh, properly timed deliveries. (Once a week, in most of the cases.)" },
     { q: "What kind of fruits will I get?", a: "You'll receive a mix of:\n1. Seasonal fruits\n2. Premium & exotic fruits\n3. Functional fruits (for specific health goals)\nAll curated based on your personalised plan." },
@@ -322,8 +325,8 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.2, ease: "backOut" }}
           >
             <Link href="/" className="brand-text-logo" style={{ alignItems: 'center', marginBottom: 0 }}>
-              <h3 className="brand-text-main" style={{ fontSize: '2.4rem' }}>KOHINOOR</h3>
-              <h4 className="brand-text-sub" style={{ fontSize: '2.8rem', paddingLeft: 0, marginTop: '-0.5rem' }}>Elite Living</h4>
+              <h3 className="brand-text-main header-brand-main">KOHINOOR</h3>
+              <h4 className="brand-text-sub header-brand-sub">Elite Living</h4>
             </Link>
           </motion.div>
           <motion.div
@@ -392,21 +395,25 @@ export default function Home() {
       </section>
 
       {/* ===== STATEMENT SECTION ===== */}
-      <section className="statement-section">
-        <div className="container">
-          <h2 className="statement-heading serif">
-            <BlurIn text="Hyderabad Doesn’t Need More Food. It" /> <br />
-            <BlurIn text="Needs Better Nutrition." delay={0.8} />
-          </h2>
-          <div className="statement-para">
-            <MagicText
-              text="You’re not unhealthy. You’re just out of balance. Get your Health Sorted! THE SOLUTION Your meals are full. Your schedule is packed. Your routine is consistent. But your nutrition isn’t."
-              className="magic-text-block"
-            />
-            <MagicTextRed
-              text="And over time, your body keeps adjusting — until it can’t."
-              className="magic-text-block"
-            />
+      <section className="statement-section" ref={statementRef}>
+        <div className="statement-sticky">
+          <div className="container">
+            <h2 className="statement-heading serif">
+              <BlurIn text="Hyderabad Doesn’t Need More Food. It" /> <br />
+              <BlurIn text="Needs Better Nutrition." delay={0.8} />
+            </h2>
+            <div className="statement-para">
+              <MagicText
+                text="You’re not unhealthy. You’re just out of balance. Get your Health Sorted! THE SOLUTION Your meals are full. Your schedule is packed. Your routine is consistent. But your nutrition isn’t."
+                className="magic-text-block"
+                progress={useTransform(statementScroll, [0.15, 0.7], [0, 1])}
+              />
+              <MagicTextRed
+                text="And over time, your body keeps adjusting — until it can’t."
+                className="magic-text-block"
+                progress={useTransform(statementScroll, [0.65, 0.95], [0, 1])}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -497,14 +504,28 @@ export default function Home() {
                 delay: 0.4,
               }}
             >
-              <Image
-                src="/meals/Group 3.png"
-                alt="Daily Routine vs Body Needs — meals comparison"
-                width={800}
-                height={500}
-                className="meals-composite-img"
-                style={{ objectFit: "contain" }}
-              />
+              <motion.div
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotateZ: [0, 0.5, -0.5, 0]
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1.2
+                }}
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              >
+                <Image
+                  src="/meals/Group 3.png"
+                  alt="Daily Routine vs Body Needs — meals comparison"
+                  width={800}
+                  height={500}
+                  className="meals-composite-img"
+                  style={{ objectFit: "contain", filter: "drop-shadow(0px 25px 35px rgba(0,0,0,0.08))" }}
+                />
+              </motion.div>
             </motion.div>
 
             <motion.div

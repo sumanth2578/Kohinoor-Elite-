@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 
 interface LayeredTextProps {
@@ -35,6 +35,17 @@ export function LayeredText({
 }: LayeredTextProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 480)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  const lh = isMobile ? 42 : lineHeight
+  const offset = isMobile ? 12 : 20
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -47,14 +58,14 @@ export function LayeredText({
     const allBottoms = container.querySelectorAll("[data-layer-bottom]")
 
     timelineRef.current.to(allTops, {
-      y: -lineHeight,
+      y: -lh,
       duration: 0.8,
       ease: "power2.out",
       stagger: 0.06,
     }, 0)
 
     timelineRef.current.to(allBottoms, {
-      y: -lineHeight,
+      y: -lh,
       duration: 0.8,
       ease: "power2.out",
       stagger: 0.06,
@@ -71,7 +82,7 @@ export function LayeredText({
       container.removeEventListener("mouseleave", handleMouseLeave)
       timelineRef.current?.kill()
     }
-  }, [lines, lineHeight])
+  }, [lines, lh])
 
   const getTextStyle = (word: string): React.CSSProperties => {
     const c = colors[word] || "#2F5D50"
@@ -113,9 +124,8 @@ export function LayeredText({
         }}
       >
         {lines.map((line, index) => {
-          const baseOffset = 20
           const centerIndex = Math.floor(lines.length / 2)
-          const tx = (index - centerIndex) * baseOffset
+          const tx = (index - centerIndex) * offset
           const isEven = index % 2 === 0
 
           return (
@@ -125,7 +135,7 @@ export function LayeredText({
               style={{
                 position: "relative",
                 overflow: "hidden",
-                height: `${lineHeight}px`,
+                height: `${lh}px`,
                 width: "100%",
                 zIndex: index,
                 marginBottom: "4px",
@@ -140,8 +150,8 @@ export function LayeredText({
                   top: 0,
                   left: 0,
                   width: "100%",
-                  height: `${lineHeight}px`,
-                  lineHeight: `${lineHeight}px`,
+                  height: `${lh}px`,
+                  lineHeight: `${lh}px`,
                   padding: "0 15px",
                   margin: 0,
                   whiteSpace: "nowrap",
@@ -154,11 +164,11 @@ export function LayeredText({
                 data-layer-bottom
                 style={{
                   position: "absolute",
-                  top: `${lineHeight}px`,
+                  top: `${lh}px`,
                   left: 0,
                   width: "100%",
-                  height: `${lineHeight}px`,
-                  lineHeight: `${lineHeight}px`,
+                  height: `${lh}px`,
+                  lineHeight: `${lh}px`,
                   padding: "0 15px",
                   margin: 0,
                   whiteSpace: "nowrap",
