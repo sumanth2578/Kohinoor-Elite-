@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { StickyLogo } from "@/components/StickyLogo";
+import { IntroAnimation } from "@/components/IntroAnimation";
 
 export default function RootLayout({
   children,
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body style={{ position: 'relative' }}>
+        <IntroAnimation />
         <StickyLogo />
         {children}
       </body>

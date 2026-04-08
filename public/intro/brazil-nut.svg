@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="nutBody" x1="20%" y1="10%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#c89968"/>
+      <stop offset="35%" stop-color="#9b6a3a"/>
+      <stop offset="75%" stop-color="#6b4423"/>
+      <stop offset="100%" stop-color="#3d2410"/>
+    </linearGradient>
+    <linearGradient id="nutFacet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.35"/>
+    </linearGradient>
+    <radialGradient id="nutHi" cx="40%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="#ffe6c2" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#ffe6c2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Triangular wedge body of brazil nut -->
+  <path d="M150 30
+           Q 220 60 245 180
+           Q 250 230 200 260
+           Q 150 280 100 260
+           Q 50 230 55 180
+           Q 80 60 150 30 Z"
+        fill="url(#nutBody)"/>
+  <!-- Facet shadow (right side darker) -->
+  <path d="M150 30
+           Q 220 60 245 180
+           Q 250 230 200 260
+           Q 175 270 150 270
+           L 150 30 Z"
+        fill="url(#nutFacet)"/>
+  <!-- Center ridge line -->
+  <path d="M150 35 Q 152 130 150 268"
+        stroke="#2a1808" stroke-width="2" fill="none" opacity="0.55"/>
+  <!-- Side ridges -->
+  <path d="M95 80 Q 80 170 100 250"
+        stroke="#2a1808" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M205 80 Q 220 170 200 250"
+        stroke="#2a1808" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <!-- Texture lines / wood grain -->
+  <g stroke="#3d2410" stroke-width="0.8" fill="none" opacity="0.4">
+    <path d="M110 100 Q 150 105 190 100"/>
+    <path d="M105 130 Q 150 136 195 130"/>
+    <path d="M95 165 Q 150 172 205 165"/>
+    <path d="M90 200 Q 150 208 210 200"/>
+    <path d="M95 230 Q 150 238 205 230"/>
+  </g>
+  <!-- Highlight -->
+  <ellipse cx="120" cy="110" rx="35" ry="50" fill="url(#nutHi)"/>
+</svg>

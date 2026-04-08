@@ -9,8 +9,8 @@ import {
   useScroll,
   useTransform,
   useMotionValueEvent,
-  useInView,
   useMotionValue,
+  useMotionTemplate,
   useSpring
 } from "framer-motion";
 import { useEffect } from "react";
@@ -20,12 +20,8 @@ import { MagicText, MagicTextRed } from "@/components/MagicText";
 
 function DiagStorySection({
   diagSlides,
-  paraX,
-  paraY
 }: {
   diagSlides: { src: string; alt: string; label: string }[];
-  paraX: any;
-  paraY: any;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -67,71 +63,53 @@ function DiagStorySection({
             </motion.p>
           </div>
 
-          <div className="diag-blueprint-grid">
-            {diagSlides.map((slide, index) => (
-              <Fragment key={index}>
-                <motion.div
-                  className={`blueprint-card ${activeStep === index ? 'active' : ''}`}
-                  animate={{
-                    scale: activeStep === index ? 1.05 : 0.95,
-                    opacity: activeStep === index ? 1 : (activeStep > index ? 0.3 : 0.1),
-                    filter: activeStep === index ? 'blur(0px)' : 'blur(1px)',
-                    y: activeStep === index ? -10 : 0
-                  }}
-                  whileHover={{
-                    rotateY: index === 0 ? -8 : 8,
-                    rotateX: 4,
-                    scale: activeStep === index ? 1.08 : 1.02,
-                    zIndex: 50
-                  }}
-                  style={{
-                    perspective: 1000,
-                    x: paraX,
-                    y: paraY,
-                    transformStyle: "preserve-3d"
-                  }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                >
-                  <div className="card-blueprint-header" style={{ transform: "translateZ(30px)" }}>
-                    <div className="index-box serif">
-                      0{index + 1}
+          <div className="diag-blueprint-row">
+            {diagSlides.map((slide, index) => {
+              const isRevealed = activeStep >= index;
+              const titles = ["Diagnostics", "Expert Prescription", "Weekly Delivery"];
+              return (
+                <Fragment key={index}>
+                  <div className={`reveal-card ${isRevealed ? 'revealed' : ''}`}>
+                    <div className="reveal-card-header">
+                      <div className="index-box serif">0{index + 1}</div>
+                      <h3 className="card-blueprint-title serif">{titles[index]}</h3>
                     </div>
-                    <h3 className="card-blueprint-title serif">
-                      {index === 0 ? "Diagnostics" : (index === 1 ? "Expert Prescription" : "Weekly Delivery")}
-                    </h3>
-                  </div>
-
-                  <div className="card-blueprint-content" style={{ transform: "translateZ(20px)" }}>
-                    <p className="card-blueprint-desc narrow">
-                      {slide.label}
-                    </p>
-
-                    <div className="card-blueprint-visual">
-                      <Image
-                        src={slide.src}
-                        alt={slide.alt}
-                        fill
-                        className="wireframe-img"
-                        style={{ objectFit: "cover" }}
-                      />
-                      <div className="wireframe-grid-overlay" />
-                    </div>
-                  </div>
-                </motion.div>
-
-                {index < diagSlides.length - 1 && (
-                  <div className="blueprint-connector">
-                    <div className="connector-line-thin" />
                     <motion.div
-                      className="connector-fill-blue"
-                      animate={{ scaleX: activeStep > index ? 1 : 0 }}
-                      style={{ originX: 0 }}
-                      transition={{ duration: 0.6 }}
-                    />
+                      className="reveal-card-body"
+                      initial={false}
+                      animate={{
+                        opacity: isRevealed ? 1 : 0,
+                        height: isRevealed ? "auto" : 0,
+                      }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <p className="card-blueprint-desc">{slide.label}</p>
+                      <div className="card-blueprint-visual">
+                        <Image
+                          src={slide.src}
+                          alt={slide.alt}
+                          fill
+                          className="wireframe-img"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </div>
+                    </motion.div>
                   </div>
-                )}
-              </Fragment>
-            ))}
+                  {index < diagSlides.length - 1 && (
+                    <div className="reveal-connector">
+                      <div className="reveal-connector-track" />
+                      <motion.div
+                        className="reveal-connector-fill"
+                        initial={false}
+                        animate={{ scaleX: activeStep > index ? 1 : 0 }}
+                        style={{ originX: 0 }}
+                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                      />
+                    </div>
+                  )}
+                </Fragment>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -177,6 +155,25 @@ export default function Home() {
   const statementRef = useRef<HTMLElement>(null);
   const { scrollYProgress: statementScroll } = useScroll({ target: statementRef, offset: ["start start", "end end"] });
 
+  // Comparison section sticky scroll-driven reveal
+  const compRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: compScroll } = useScroll({ target: compRef, offset: ["start start", "end end"] });
+  // Stage 1 (0.05 → 0.3): left text + left half of image reveal
+  const leftOpacity = useTransform(compScroll, [0.05, 0.2, 0.3], [0, 1, 1]);
+  const leftX = useTransform(compScroll, [0.05, 0.3], [-80, 0]);
+  // Diagonal split: line goes from ~58% at top to ~42% at bottom
+  const leftTopPct = useTransform(compScroll, [0.05, 0.3], [0, 58]);
+  const leftBotPct = useTransform(compScroll, [0.05, 0.3], [0, 42]);
+  const leftClip = useMotionTemplate`polygon(0% 0%, ${leftTopPct}% 0%, ${leftBotPct}% 100%, 0% 100%)`;
+  // Pause from 0.3 → 0.45 so user can read left
+  // Stage 2 (0.45 → 0.7): right text + right half reveal
+  const rightOpacity = useTransform(compScroll, [0.45, 0.6, 0.7], [0, 1, 1]);
+  const rightX = useTransform(compScroll, [0.45, 0.7], [80, 0]);
+  const rightTopPct = useTransform(compScroll, [0.45, 0.7], [100, 58]);
+  const rightBotPct = useTransform(compScroll, [0.45, 0.7], [100, 42]);
+  const rightClip = useMotionTemplate`polygon(${rightTopPct}% 0%, 100% 0%, 100% 100%, ${rightBotPct}% 100%)`;
+  // From 0.7 → 1.0 both sides hold their final state before sticky releases
+
   // Cursor tracking for parallax
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -199,38 +196,25 @@ export default function Home() {
   const paraX = useTransform(smoothX, [-0.5, 0.5], [-15, 15]);
   const paraY = useTransform(smoothY, [-0.5, 0.5], [-15, 15]);
 
-  // Video playback logic
   const mealsRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const mealsInView = useInView(mealsRef, { once: false, amount: 0.1 });
-  const [videoEnded, setVideoEnded] = useState(false);
 
-  useEffect(() => {
-    if (mealsInView) {
-      setVideoEnded(false);
-      // Wait for re-mount then play
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.currentTime = 0;
-          videoRef.current.play().catch(e => console.error("Video play error:", e));
-        }
-      }, 50);
-    }
-  }, [mealsInView]);
+  // Stats section sticky scroll-driven reveal
+  const statsRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: statsScroll } = useScroll({ target: statsRef, offset: ["start start", "end end"] });
 
   const diagSlides = [
     {
-      src: "/diagnostics_vial.png",
+      src: "/dia.png",
       alt: "Blood Diagnostics",
       label: "Diagnostics",
     },
     {
-      src: "/pexels-michelangelo-buonarroti-4176846 2.png",
+      src: "/pre.png",
       alt: "Expert Prescription",
       label: "Expert nutrition prescription for planning of custom meals and fruits/nuts plan",
     },
     {
-      src: "/pexels-michelangelo-buonarroti-4176846 3.png",
+      src: "/delivery.png",
       alt: "Delivery Package",
       label: "Delivery of custom fruit, nuts and seeds package every week",
     },
@@ -287,9 +271,26 @@ export default function Home() {
     { q: "How does delivery work?", a: "We deliver weekly to ensure the peak freshness of your superfoods. All boxes are handled with care to preserve nutrient density." },
   ];
 
-  const StatBar = ({ stat, index }: { stat: any, index: number }) => {
+  const StatBar = ({ stat, index, progress }: { stat: any, index: number, progress: any }) => {
     const [count, setCount] = useState(0);
-    const [hasAnimated, setHasAnimated] = useState(false);
+    // Per-bar timeline (each bar gets ~28% of the section scroll):
+    //   Bar 0:  fill 0.04→0.20 | text 0.16→0.30
+    //   Bar 1:  fill 0.30→0.46 | text 0.42→0.56
+    //   Bar 2:  fill 0.56→0.72 | text 0.68→0.82
+    // Hold from 0.82 → 1.0 so user can read everything before sticky releases
+    const slot = 0.26;
+    const barStart = 0.04 + index * slot;
+    const barEnd = barStart + 0.16;
+    const targetPct = parseInt(stat.pct);
+    const targetHeight = parseInt(stat.height);
+
+    const heightPct = useTransform(progress, [barStart, barEnd], [0, targetHeight]);
+    const heightStyle = useTransform(heightPct, (v: number) => `${v}%`);
+    const countMotion = useTransform(progress, [barStart, barEnd], [0, targetPct]);
+
+    useMotionValueEvent(countMotion, "change", (latest) => {
+      setCount(Math.floor(latest));
+    });
 
     return (
       <motion.div
@@ -306,66 +307,23 @@ export default function Home() {
       >
         <div className="stat-bar-outer">
           <div className="stat-bar-backdrop"></div>
-          <motion.div
+          <div
             className="stat-bar-glow"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.4 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 + 0.4, duration: 0.6 }}
-            style={{ background: stat.glowColor }}
+            style={{ background: stat.glowColor, opacity: 0.4 }}
           />
           <motion.div
-            initial={{ height: 0 }}
-            whileInView={{ height: stat.height }}
-            viewport={{ once: true, margin: "-50px" }}
-            onViewportEnter={() => {
-              if (hasAnimated) return;
-              setHasAnimated(true);
-              const end = parseInt(stat.pct);
-              const duration = 0.8;
-              const startTime = Date.now();
-              const timer = setInterval(() => {
-                const elapsed = (Date.now() - startTime) / 1000;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                setCount(Math.floor(eased * end));
-                if (progress >= 1) {
-                  setCount(end);
-                  clearInterval(timer);
-                }
-              }, 1000 / 60);
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 80,
-              damping: 18,
-              delay: index * 0.12 + 0.15
-            }}
             className="stat-bar-inner"
-            style={{ background: stat.gradient }}
+            style={{ background: stat.gradient, height: heightStyle }}
           >
             <div className="stat-bar-shimmer" style={{ animationDelay: `${index * 0.3}s` }} />
             <div className="stat-bar-edge" />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.12 + 0.5, duration: 0.3, ease: "backOut" }}
-              className="stat-pct"
-            >
-              {count}%
-            </motion.div>
+            <div className="stat-pct">{count}%</div>
           </motion.div>
         </div>
-        <motion.div
-          className="stat-info"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.12 + 0.6, duration: 0.4 }}
-          viewport={{ once: true }}
-        >
-          <p className="stat-label serif" style={{ color: stat.glowColor?.replace('0.6', '1') || '#ff3b1f' }}>{stat.label}</p>
+        <div className="stat-info">
+          <p className="stat-label serif" style={{ color: '#ff5a3d' }}>{stat.label}</p>
           <p className="stat-description">{stat.desc}</p>
-        </motion.div>
+        </div>
       </motion.div>
     );
   };
@@ -402,7 +360,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link href="/connect" className="score-btn desktop-only">
-              Get your Health Sorted!
+              Take The First Step!
               <ChevronRight size={18} strokeWidth={2.5} />
             </Link>
             <button
@@ -437,7 +395,7 @@ export default function Home() {
                 className="mobile-menu-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Get your Health Sorted!
+                take The First Step!
                 <ChevronRight size={18} strokeWidth={2.5} />
               </Link>
             </motion.div>
@@ -481,17 +439,19 @@ export default function Home() {
       </section>
 
       {/* ===== STATS SECTION ===== */}
-      <section className="stats-section">
-        <div className="container">
-          <motion.h2 {...fadeInUp} className="stats-heading serif">
-            Hyderabad is growing fast. <br />
-            So are lifestyle diseases.
-          </motion.h2>
+      <section className="stats-section" ref={statsRef}>
+        <div className="stats-sticky">
+          <div className="container">
+            <motion.h2 {...fadeInUp} className="stats-heading serif">
+              Hyderabad is growing fast. <br />
+              So are lifestyle diseases.
+            </motion.h2>
 
-          <div className="stats-grid">
-            {stats.map((stat, i) => (
-              <StatBar key={i} stat={stat} index={i} />
-            ))}
+            <div className="stats-grid">
+              {stats.map((stat, i) => (
+                <StatBar key={i} stat={stat} index={i} progress={statsScroll} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -506,7 +466,7 @@ export default function Home() {
             </h2>
             <div className="statement-para">
               <MagicText
-                text="You’re not unhealthy. You’re just out of balance. Get your Health Sorted! THE SOLUTION Your meals are full. Your schedule is packed. Your routine is consistent. But your nutrition isn’t."
+                text="You’re not unhealthy. You’re just out of balance.  Sorted! THE SOLUTION Your meals are full. Your schedule is packed. Your routine is consistent. But your nutrition isn’t."
                 className="magic-text-block"
                 progress={useTransform(statementScroll, [0.15, 0.7], [0, 1])}
                 x={paraX}
@@ -525,191 +485,110 @@ export default function Home() {
       </section>
 
       {/* ===== NUTRITION COMPARISON SECTION ===== */}
-      <section id="learn" className="comparison-section" style={{ isolation: 'isolate' }}>
-        <div className="container">
-          <motion.div
-            className="comp-header"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2 className="comp-title serif">
-              <span className="comp-title-row">
-                <span className="comp-title-left">
-                  <motion.span
-                    className="red"
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                  >
-                    Your Meals Fills
-                  </motion.span>
-                  <motion.span
-                    className="grey"
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                  >
-                    Nutrition Completes
-                  </motion.span>
+      <section id="learn" className="comparison-section" ref={compRef} style={{ isolation: 'isolate' }}>
+        <div className="comparison-sticky">
+          <div className="container">
+            <div className="comp-header">
+              <h2 className="comp-title serif">
+                <span className="comp-title-row">
+                  <span className="comp-title-left">
+                    <span className="red">Your Meals Fills</span>
+                    <span className="grey">Nutrition Completes</span>
+                  </span>
+                  <span className="bold-black">You</span>
                 </span>
-                <motion.span
-                  className="bold-black"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.3, ease: "backOut" }}
-                >
-                  You
-                </motion.span>
-              </span>
-            </h2>
-            <motion.div
-              className="comp-divider"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              style={{ transformOrigin: "left" }}
-            />
-          </motion.div>
+              </h2>
+              <div className="comp-divider" />
+            </div>
 
-          <div className="comp-visual-grid">
-            <motion.div
-              className="comp-col-left"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <h3 className="comp-label serif">Your Daily Routine</h3>
-              <motion.p
-                className="comp-text-small"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-              >
-                Daily meals in Hyderabad are filling and energy-rich — built around rice, roti, curries, and quick bites. They keep you going through busy days, but often lack essential vitamins, minerals, and micronutrients your body needs consistently.
-              </motion.p>
-            </motion.div>
-
-            <motion.div
-              className="meals-composite-wrap"
-              ref={mealsRef}
-              initial={{ opacity: 0, scale: 0.3, y: 60 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                type: "spring",
-                stiffness: 120,
-                damping: 14,
-                mass: 1.2,
-                delay: 0.4,
-              }}
-            >
+            <div className="comp-visual-grid">
               <motion.div
-                animate={{
-                  y: [0, -15, 0],
-                  rotateZ: [0, 0.5, -0.5, 0]
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1.2
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  background: 'transparent'
-                }}
+                className="comp-col-left"
+                style={{ opacity: leftOpacity, x: leftX }}
               >
-                <div style={{
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: '800px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {/* The static image serves as the layout base and final state */}
+                <h3 className="comp-label serif">Your Daily Routine</h3>
+                <p className="comp-text-small">
+                  Daily meals in Hyderabad are filling and energy-rich — built around rice, roti, curries, and quick bites. They keep you going through busy days, but often lack essential vitamins, minerals, and micronutrients your body needs consistently.
+                </p>
+              </motion.div>
+
+              <div className="meals-composite-wrap" ref={mealsRef}>
+                <div className="comp-image-stack">
+                  {/* Sizing layer — invisible base image to define container size */}
                   <Image
                     src="/meals/Group_3.png"
-                    alt="Nutrition Needs Static"
+                    alt=""
                     width={800}
                     height={500}
                     priority
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      objectFit: "contain",
-                      display: 'block',
-                      mixBlendMode: 'multiply',
-                      opacity: videoEnded ? 1 : 0, // Hide while video is active to prevent ghosting
-                      transition: 'opacity 0.2s ease-in-out'
-                    }}
+                    aria-hidden
+                    className="comp-image-base"
                   />
-                  {!videoEnded && mealsInView && (
-                    <video
-                      key="active-video-v5"
-                      ref={videoRef}
-                      src="/updated-ani.mp4"
-                      muted
-                      playsInline
-                      autoPlay
-                      onEnded={() => setVideoEnded(true)}
-                      onError={(e) => {
-                        console.error("Video element error:", e);
-                        setVideoEnded(true);
-                      }}
+                  {/* Left half — revealed in stage 1 */}
+                  <motion.div
+                    className="comp-image-layer"
+                    style={{
+                      clipPath: leftClip,
+                      WebkitClipPath: leftClip,
+                    }}
+                  >
+                    <Image
+                      src="/meals/Group_3.png"
+                      alt="Daily meals"
+                      width={800}
+                      height={500}
+                      priority
                       style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
                         width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                        pointerEvents: 'none',
-                        mixBlendMode: 'multiply',
+                        height: 'auto',
+                        objectFit: "contain",
                         display: 'block',
-                        zIndex: 10,
-                        opacity: 1
+                        mixBlendMode: 'multiply',
                       }}
                     />
-                  )}
+                  </motion.div>
+                  {/* Right half — revealed in stage 2 */}
+                  <motion.div
+                    className="comp-image-layer"
+                    style={{
+                      clipPath: rightClip,
+                      WebkitClipPath: rightClip,
+                    }}
+                  >
+                    <Image
+                      src="/meals/Group_3.png"
+                      alt="Body needs"
+                      width={800}
+                      height={500}
+                      priority
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: "contain",
+                        display: 'block',
+                        mixBlendMode: 'multiply',
+                      }}
+                    />
+                  </motion.div>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
 
-            <motion.div
-              className="comp-col-right"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <h3 className="comp-label serif">What your Body Needs</h3>
-              <motion.p
-                className="comp-text-small"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.7 }}
+              <motion.div
+                className="comp-col-right"
+                style={{ opacity: rightOpacity, x: rightX }}
               >
-                Daily Nutrition Target: 2–3 servings of fruits per day to support energy, immunity, and overall balance.
-              </motion.p>
-            </motion.div>
+                <h3 className="comp-label serif">What your Body Needs</h3>
+                <p className="comp-text-small">
+                  Daily Nutrition Target: 2–3 servings of fruits per day to support energy, immunity, and overall balance.
+                </p>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ===== DIAGNOSTICS SECTION ===== */}
-      <DiagStorySection diagSlides={diagSlides} paraX={paraX} paraY={paraY} />
+      <DiagStorySection diagSlides={diagSlides} />
 
       {/* ===== BENEFITS SECTION ===== */}
       <section className="benefits-section">
@@ -812,8 +691,8 @@ export default function Home() {
             </div>
             <p className="footer-tagline">Empowering good nutrition and personally curated, tailored nutrition and Wholesome deliveries.</p>
             <div className="footer-badges">
-              <span className="footer-badge">REGISTERED ENTITY DUNS</span>
-              <span className="footer-badge">UAE GAMING KHIDMAT/INDIA PRIVATE LIMITED</span>
+
+              <span className="footer-badge">Shri Lakshmi Kohinoor Enterprises Pvt. Ltd</span>
             </div>
           </motion.div>
           <div className="footer-links-group">
