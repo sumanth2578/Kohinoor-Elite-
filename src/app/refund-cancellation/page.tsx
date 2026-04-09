@@ -49,7 +49,7 @@ export default function RefundCancellationPage() {
 
           <h3>3. Refund Process</h3>
           <p>
-            If you receive a damaged or incorrect item, please notify us within 24 hours of delivery by emailing <a href="mailto:service@kohinoorelite.com" style={{ textDecoration: 'underline' }}>service@kohinoorelite.com</a>, or by Calling / WhatsApp at <strong>81793 37052</strong> with photos of the damaged product.
+            If you receive a damaged or incorrect item, please notify us within 24 hours of delivery by emailing <a href="mailto:service@kohinoorelite.com" style={{ textDecoration: 'underline' }}>service@kohinoorelite.com</a>, or by Calling / WhatsApp at <strong><a href="https://wa.me/919491337052" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>94913 37052</a></strong> with photos of the damaged product.
           </p>
           <p>
             Upon verification, we will initiate a refund or a replacement.

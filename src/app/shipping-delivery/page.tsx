@@ -53,7 +53,7 @@ export default function ShippingDeliveryPage() {
           <h3>6. Contact Us</h3>
           <p>If you have any issues with your delivery, please contact our logistics support at:</p>
           <p>Email: <a href="mailto:service@kohinoorelite.com" style={{ textDecoration: 'underline' }}>service@kohinoorelite.com</a></p>
-          <p>Phone: <strong>81793 37052</strong></p>
+          <p>Phone / WhatsApp: <strong><a href="https://wa.me/919491337052" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>94913 37052</a></strong></p>
         </div>
       </div>
     </main>

@@ -72,7 +72,7 @@ export default function ConnectPage() {
         transition={{ duration: 0.4, delay: 0.2 }}
       >
         <motion.a
-          href="https://wa.me/918179337052"
+          href="https://wa.me/919491337052"
           target="_blank"
           rel="noopener noreferrer"
           className="connect-btn connect-btn-wa"
