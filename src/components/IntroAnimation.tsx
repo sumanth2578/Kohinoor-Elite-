@@ -11,17 +11,25 @@ import { motion, AnimatePresence } from "framer-motion";
  */
 export function IntroAnimation() {
   const [show, setShow] = useState(true);
+  const [blurPhase, setBlurPhase] = useState(false);
 
   useEffect(() => {
     // Lock body scroll while intro is playing
     document.body.style.overflow = "hidden";
+    
+    // Trigger blur phase once text is visible
+    const blurTimer = setTimeout(() => {
+      setBlurPhase(true);
+    }, 2500);
+
     const timer = setTimeout(() => {
       setShow(false);
       document.body.style.overflow = "";
-    }, 3800);
+    }, 4200); // Slightly extended to show the blur effect longer
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(blurTimer);
       document.body.style.overflow = "";
     };
   }, []);
@@ -72,19 +80,22 @@ export function IntroAnimation() {
                   rotate: item.from.rotate,
                   scale: 0.4,
                   opacity: 0,
+                  filter: "blur(0px)",
                 }}
                 animate={{
                   x: item.to.x,
                   y: item.to.y,
                   rotate: item.to.rotate,
-                  scale: 1,
-                  opacity: 1,
+                  scale: blurPhase ? 0.9 : 1,
+                  opacity: blurPhase ? 0.3 : 1,
+                  filter: blurPhase ? "blur(12px)" : "blur(0px)",
                 }}
                 transition={{
-                  duration: 1.4,
-                  delay: item.delay,
+                  duration: blurPhase ? 1.5 : 1.4,
+                  delay: blurPhase ? 0 : item.delay,
                   ease: [0.22, 1, 0.36, 1],
                 }}
+                style={{ zIndex: blurPhase ? 1 : 10 }}
               >
                 <motion.div
                   animate={{ y: [0, -12, 0] }}
@@ -116,10 +127,23 @@ export function IntroAnimation() {
               className="intro-text"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.4, ease: "easeOut" }}
+              transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
+              style={{ zIndex: 20 }}
             >
-              <h1 className="intro-title serif">KOHINOOR</h1>
-              <p className="intro-tagline">Elite Living.</p>
+              <motion.h1 
+                className="intro-title serif"
+                animate={{ scale: blurPhase ? 1.05 : 1 }}
+                transition={{ duration: 2, ease: "easeOut" }}
+              >
+                KOHINOOR
+              </motion.h1>
+              <motion.p 
+                className="intro-tagline"
+                animate={{ scale: blurPhase ? 1.1 : 1 }}
+                transition={{ duration: 2, ease: "easeOut" }}
+              >
+                Elite Living.
+              </motion.p>
             </motion.div>
           </div>
         </motion.div>

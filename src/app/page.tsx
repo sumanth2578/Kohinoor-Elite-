@@ -272,7 +272,7 @@ export default function Home() {
   ];
 
   const StatBar = ({ stat, index, progress }: { stat: any, index: number, progress: any }) => {
-    const [count, setCount] = useState(0);
+    const countRef = useRef<HTMLSpanElement>(null);
     // Per-bar timeline (each bar gets ~28% of the section scroll):
     //   Bar 0:  fill 0.04→0.20 | text 0.16→0.30
     //   Bar 1:  fill 0.30→0.46 | text 0.42→0.56
@@ -289,7 +289,9 @@ export default function Home() {
     const countMotion = useTransform(progress, [barStart, barEnd], [0, targetPct]);
 
     useMotionValueEvent(countMotion, "change", (latest) => {
-      setCount(Math.floor(latest));
+      if (countRef.current) {
+        countRef.current.textContent = `${Math.floor(latest)}%`;
+      }
     });
 
     return (
@@ -304,6 +306,7 @@ export default function Home() {
           ease: [0.16, 1, 0.3, 1]
         }}
         className="stat-card"
+        style={{ willChange: "transform, opacity" }}
       >
         <div className="stat-bar-outer">
           <div className="stat-bar-backdrop"></div>
@@ -313,11 +316,15 @@ export default function Home() {
           />
           <motion.div
             className="stat-bar-inner"
-            style={{ background: stat.gradient, height: heightStyle }}
+            style={{ background: stat.gradient, height: heightStyle, transformOrigin: "bottom", willChange: "height", overflow: 'hidden' }}
           >
+            <div className="stat-bar-wave wave-1" />
+            <div className="stat-bar-wave wave-2" />
             <div className="stat-bar-shimmer" style={{ animationDelay: `${index * 0.3}s` }} />
             <div className="stat-bar-edge" />
-            <div className="stat-pct">{count}%</div>
+            <div className="stat-pct">
+              <span ref={countRef}>0%</span>
+            </div>
           </motion.div>
         </div>
         <div className="stat-info">
@@ -360,7 +367,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link href="/connect" className="score-btn desktop-only">
-              Take The First Step!
+              Take the First Step!
               <ChevronRight size={18} strokeWidth={2.5} />
             </Link>
             <button
@@ -395,7 +402,7 @@ export default function Home() {
                 className="mobile-menu-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                take The First Step!
+                Take the First Step!
                 <ChevronRight size={18} strokeWidth={2.5} />
               </Link>
             </motion.div>
@@ -745,7 +752,7 @@ export default function Home() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p className="footer-copy">&copy; 2026 Kohinoor Elite Living Private Limited. All rights reserved.</p>
+          <p className="footer-copy">&copy; 2026 Shri Lakshmi Kohinoor Enterprises Pvt. Ltd. All rights reserved.</p>
         </div>
       </motion.footer>
     </div>
