@@ -404,8 +404,8 @@ img, video { max-width: 100%; height: auto; }
 @keyframes shimmer { 0% { left: -100%; } 100% { left: 200%; } }
 .stat-bar-edge { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); z-index: 5; }
 .stat-pct { font-size: 1.8rem; font-weight: 800; color: #fff; position: relative; z-index: 3; text-shadow: 0 0 20px rgba(255,255,255,0.3); letter-spacing: -0.5px; }
-.stat-description { font-size: 0.95rem; opacity: 1; color: #ffffff; line-height: 1.6; text-align: center; padding: 0 1rem; max-width: 320px; margin: 0 auto; }
-.stat-label { font-size: 1.15rem; font-weight: 600; letter-spacing: 0.12rem; text-transform: uppercase; margin-bottom: 0.6rem; opacity: 1; text-align: center; }
+.stat-description { font-size: 0.95rem; opacity: 1; color: #ffffff; line-height: 1.6; text-align: center; padding: 0 1rem; max-width: 320px; margin: 0 auto; font-weight: 500; }
+.stat-label { font-size: 1.15rem; font-weight: 800; letter-spacing: 0.12rem; text-transform: uppercase; margin-bottom: 0.6rem; opacity: 1; text-align: center; }
 
 /* ===== STATEMENT ===== */
 .statement-section { height: 250vh; position: relative; padding: 0; background: #000; }
@@ -1408,8 +1408,8 @@ img, video { max-width: 100%; height: auto; }
   .stats-heading { font-size: 1.2rem; margin-bottom: 2.2rem; }
   .stat-bar-outer { height: 110px; }
   .stat-pct { font-size: 1.1rem; }
-  .stat-label { font-size: 0.78rem; }
-  .stat-description { font-size: 0.68rem; line-height: 1.3; }
+  .stat-label { font-size: 0.78rem; font-weight: 800 !important; }
+  .stat-description { font-size: 0.68rem; line-height: 1.3; font-weight: 500 !important; }
   .comp-title .bold-black { font-size: clamp(2rem, 14vw, 3rem); }
   .intro-item img { width: 75px !important; max-width: 24vw; }
   .intro-title { font-size: clamp(1.6rem, 12vw, 2.6rem); }
