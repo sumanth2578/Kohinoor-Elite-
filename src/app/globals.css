@@ -1391,7 +1391,7 @@ img, video { max-width: 100%; height: auto; }
 
   /* Stats section density for all mobile sizes */
   .stat-label { font-weight: 800 !important; }
-  .stat-description { font-weight: 500 !important; }
+  .stat-description { font-weight: 700 !important; }
 }
 
 /* Mobile portrait (≤480px) */
