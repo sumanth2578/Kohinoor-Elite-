@@ -1234,6 +1234,37 @@ img, video { max-width: 100%; height: auto; }
   justify-content: center;
   z-index: 1;
 }
+
+@media (max-width: 768px) {
+  .connect-page {
+    padding: 1.5rem 1rem;
+    gap: 1.2rem;
+    justify-content: space-evenly;
+  }
+  .connect-logo-img {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  .connect-glow {
+    width: 200px;
+    height: 200px;
+  }
+  .connect-qr-wrap {
+    padding: 1rem;
+  }
+  .connect-qr-img {
+    width: 180px !important;
+    height: 180px !important;
+  }
+  .connect-text {
+    font-size: 0.9rem;
+    max-width: 240px;
+  }
+  .connect-btn {
+    width: 48px;
+    height: 48px;
+  }
+}
 .connect-glow {
   position: absolute;
   width: 320px;
