@@ -1388,6 +1388,10 @@ img, video { max-width: 100%; height: auto; }
   .comp-label { font-weight: 800 !important; }
   .comp-text-small { font-weight: 600 !important; }
   h1, h2, h3, h4, .serif { font-weight: 600 !important; }
+
+  /* Stats section density for all mobile sizes */
+  .stat-label { font-weight: 800 !important; }
+  .stat-description { font-weight: 500 !important; }
 }
 
 /* Mobile portrait (≤480px) */
@@ -1408,8 +1412,8 @@ img, video { max-width: 100%; height: auto; }
   .stats-heading { font-size: 1.2rem; margin-bottom: 2.2rem; }
   .stat-bar-outer { height: 110px; }
   .stat-pct { font-size: 1.1rem; }
-  .stat-label { font-size: 0.78rem; font-weight: 800 !important; }
-  .stat-description { font-size: 0.68rem; line-height: 1.3; font-weight: 500 !important; }
+  .stat-label { font-size: 0.78rem; }
+  .stat-description { font-size: 0.68rem; line-height: 1.3; }
   .comp-title .bold-black { font-size: clamp(2rem, 14vw, 3rem); }
   .intro-item img { width: 75px !important; max-width: 24vw; }
   .intro-title { font-size: clamp(1.6rem, 12vw, 2.6rem); }
