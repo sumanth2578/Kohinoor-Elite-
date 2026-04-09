@@ -367,7 +367,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link href="/connect" className="score-btn desktop-only">
-              Take the First Step!
+              Take The First Step!
               <ChevronRight size={18} strokeWidth={2.5} />
             </Link>
             <button
@@ -402,7 +402,7 @@ export default function Home() {
                 className="mobile-menu-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Take the First Step!
+                Take The First Step!
                 <ChevronRight size={18} strokeWidth={2.5} />
               </Link>
             </motion.div>

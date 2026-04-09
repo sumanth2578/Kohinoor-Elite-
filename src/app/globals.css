@@ -45,7 +45,7 @@ body {
 
 h1, h2, h3, h4, .serif {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 500;
 }
 .script {
   font-family: var(--font-script);
@@ -211,7 +211,7 @@ img, video { max-width: 100%; height: auto; }
 
 @media (max-width: 768px) {
   .intro-title { font-size: clamp(2.2rem, 11vw, 4rem); }
-  .intro-tagline { font-size: clamp(1rem, 4vw, 1.4rem); }
+  .intro-tagline { font-size: clamp(2.5rem, 12vw, 3.5rem); }
 }
 
 /* Hamburger / Mobile menu */
@@ -301,7 +301,7 @@ img, video { max-width: 100%; height: auto; }
 .hero-para {
   max-width: 800px;
   font-size: clamp(1rem, 2vw, 1.25rem);
-  opacity: 0.7;
+  opacity: 0.9;
   line-height: 1.7;
   margin-bottom: 4rem;
   text-align: center;
@@ -465,8 +465,8 @@ img, video { max-width: 100%; height: auto; }
 .comp-visual-grid { display: grid; grid-template-columns: 1fr 2.5fr 1fr; gap: 2rem; align-items: stretch; max-width: 1250px; margin: 0 auto; position: relative; }
 .comp-col-left { display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-end; text-align: right; padding: 3rem 1rem 0 0; }
 .comp-col-right { display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; text-align: left; padding: 3rem 0 0 1rem; }
-.comp-label { font-size: clamp(1.2rem, 1.8vw, 1.5rem); font-weight: 500; color: #111; margin: 0; line-height: 1.3; }
-.comp-text-small { font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6; color: #222; opacity: 0.85; max-width: 280px; font-weight: 400; margin: 0; margin-top: clamp(10rem, 16vw, 18rem); }
+.comp-label { font-size: clamp(1.2rem, 1.8vw, 1.5rem); font-weight: 700; color: #111; margin: 0; line-height: 1.3; }
+.comp-text-small { font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6; color: #000; opacity: 1; max-width: 280px; font-weight: 500; margin: 0; margin-top: clamp(10rem, 16vw, 18rem); }
 
 /* Composite meals image */
 .meals-composite-wrap {
@@ -523,9 +523,10 @@ img, video { max-width: 100%; height: auto; }
 .diag-sub-text-blueprint {
   max-width: 650px;
   margin: 0 auto;
-  color: #4a7c8c;
+  color: #2c4e5a;
   line-height: 1.6;
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .diag-blueprint-grid {
@@ -1351,6 +1352,11 @@ img, video { max-width: 100%; height: auto; }
   .hero-title { white-space: normal; word-break: break-word; }
   /* Scale intro animation items (sized via inline JS — needs !important) */
   .intro-item img { width: 130px !important; max-width: 30vw; }
+  
+  /* Increase text density for mobile */
+  .comp-label { font-weight: 800 !important; }
+  .comp-text-small { font-weight: 600 !important; }
+  h1, h2, h3, h4, .serif { font-weight: 600 !important; }
 }
 
 /* Mobile portrait (≤480px) */
