@@ -9,6 +9,7 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kohinooreliteliving.com"),
   title: "Kohinoor | Elite Living",
   description: "Experience the pinnacle of nutrition and wellness with Kohinoor Elite Living. Personalized nutrition plans and premium superfoods delivered in Hyderabad.",
   icons: {
