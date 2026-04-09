@@ -11,6 +11,10 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   title: "Kohinoor | Elite Living",
   description: "Experience the pinnacle of nutrition and wellness with Kohinoor Elite Living. Personalized nutrition plans and premium superfoods delivered in Hyderabad.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 import { StickyLogo } from "@/components/StickyLogo";
