@@ -4,6 +4,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms & Conditions | Kohinoor Elite Living",
   description: "Terms and conditions of use for Kohinoor Elite Living.",
+  alternates: {
+    canonical: "/terms-conditions",
+  },
 };
 
 export default function TermsConditionsPage() {

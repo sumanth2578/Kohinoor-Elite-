@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Kohinoor Extra Living",
-  description: "Privacy Policy for Kohinoor Extra Living WhatsApp Business Platform Bot.",
+  title: "Privacy Policy | Kohinoor Elite Living",
+  description: "Privacy Policy for Kohinoor Elite Living.",
+  alternates: {
+    canonical: "/privacy-policy",
+  },
 };
 
 export default function PrivacyPolicyPage() {

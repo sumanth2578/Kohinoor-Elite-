@@ -4,6 +4,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Shipping & Delivery Policy | Kohinoor Elite Living",
   description: "Shipping and delivery policies for Kohinoor Elite Living products.",
+  alternates: {
+    canonical: "/shipping-delivery",
+  },
 };
 
 export default function ShippingDeliveryPage() {

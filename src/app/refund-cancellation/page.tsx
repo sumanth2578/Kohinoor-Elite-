@@ -4,6 +4,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Refund & Cancellation Policy | Kohinoor Elite Living",
   description: "Refund and cancellation policy for Kohinoor Elite Living products.",
+  alternates: {
+    canonical: "/refund-cancellation",
+  },
 };
 
 export default function RefundCancellationPage() {
